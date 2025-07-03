@@ -273,7 +273,21 @@ body {
   transition: left 0.3s ease;
   z-index: -1;
 }
+.main-btn {
+  background: var(--card-bg);
+  border-radius: 15px;
+  position: relative;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  border-color: var(--primary-color);
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
 
+.main-btn h3 {
+  color: var(--text-primary);
+  font-size: 1.3rem;
+}
 .main-btn:hover::before {
   left: 0;
 }

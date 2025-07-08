@@ -1,30 +1,22 @@
-// Navigation functionality
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const navLinks = document.querySelectorAll('.nav-link');
     const sections = document.querySelectorAll('.section');
     const readMoreBtn = document.getElementById('readMoreBtn');
-    const contactForm = document.querySelector('.contact-form');
+    const contactForm = document.getElementById('contact-form');
 
     // Navigation switching
     navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
             e.preventDefault();
 
-            // Remove active class from all nav links
             navLinks.forEach(nav => nav.classList.remove('active'));
-
-            // Add active class to clicked nav link
             this.classList.add('active');
 
-            // Hide all sections
             sections.forEach(section => section.classList.remove('active'));
 
-            // Show target section
             const targetSection = document.getElementById(this.dataset.section);
             if (targetSection) {
                 targetSection.classList.add('active');
-
-                // Animate skill bars if skills section is active
                 if (this.dataset.section === 'skills') {
                     animateSkillBars();
                 }
@@ -34,37 +26,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Read More button functionality
     if (readMoreBtn) {
-        readMoreBtn.addEventListener('click', function() {
-            // Switch to about section
+        readMoreBtn.addEventListener('click', function () {
             navLinks.forEach(nav => nav.classList.remove('active'));
             sections.forEach(section => section.classList.remove('active'));
 
-            document.querySelector('[data-section="about"]').classList.add('active');
-            document.getElementById('about').classList.add('active');
+            const aboutNavLink = document.querySelector('.nav-link[data-section="about"]');
+            const aboutSection = document.getElementById('about');
+
+            if (aboutNavLink) aboutNavLink.classList.add('active');
+            if (aboutSection) aboutSection.classList.add('active');
         });
     }
 
     // Contact form submission
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwSiT89Ac3Pqm_uoLdyrNRihNdbimEfqNmostZp8ns0J-c3YH86YSkJOaTWKI3lshef/exec';
+
     if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
+        contactForm.addEventListener('submit', function (e) {
             e.preventDefault();
+            const formData = new FormData(contactForm);
 
-            // Get form data
-            const formData = new FormData(this);
-            const name = formData.get('name');
-            const email = formData.get('email');
-            const subject = formData.get('subject');
-            const message = formData.get('message');
-
-            // Simple validation
-            if (!name || !email || !subject || !message) {
-                showNotification('Please fill in all fields', 'error');
-                return;
-            }
-
-            // Simulate form submission
-            showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
-            this.reset();
+            fetch(scriptURL, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        showNotification('Message sent successfully!', 'success');
+                        contactForm.reset();
+                    } else {
+                        showNotification('Error: ' + data.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    showNotification('Failed to send message.', 'error');
+                });
         });
     }
 
@@ -82,12 +80,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Show notification
     function showNotification(message, type) {
-        // Create notification element
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         notification.textContent = message;
 
-        // Style the notification
         notification.style.cssText = `
             position: fixed;
             top: 20px;
@@ -104,12 +100,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.body.appendChild(notification);
 
-        // Animate in
         setTimeout(() => {
             notification.style.transform = 'translateX(0)';
         }, 100);
 
-        // Remove after 3 seconds
         setTimeout(() => {
             notification.style.transform = 'translateX(100%)';
             setTimeout(() => {
@@ -120,60 +114,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Smooth scrolling for internal links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
+        anchor.addEventListener('click', function (e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
     });
 
-    // Add loading animation to profile image
+    // Profile image fade-in and fallback
     const profileImg = document.querySelector('.profile-img');
     if (profileImg) {
-        profileImg.addEventListener('load', function() {
+        profileImg.addEventListener('load', function () {
             this.style.opacity = '1';
         });
 
-        // Add error handling for image
-        profileImg.addEventListener('error', function() {
+        profileImg.addEventListener('error', function () {
             this.src = 'https://images.pexels.com/photos/3756679/pexels-photo-3756679.jpeg?auto=compress&cs=tinysrgb&w=400';
         });
     }
 
-    // Add hover effects to project cards
+    // Project card hover
     const projectCards = document.querySelectorAll('.project-card');
     projectCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
+        card.addEventListener('mouseenter', function () {
             this.style.transform = 'translateY(-10px) scale(1.02)';
         });
-
-        card.addEventListener('mouseleave', function() {
+        card.addEventListener('mouseleave', function () {
             this.style.transform = 'translateY(0) scale(1)';
         });
     });
 
-    // Add typing effect to hero title
-    function typeWriter(element, text, speed = 100) {
-        let i = 0;
-        element.innerHTML = '';
-
-        function type() {
-            if (i < text.length) {
-                element.innerHTML += text.charAt(i);
-                i++;
-                setTimeout(type, speed);
-            }
-        }
-
-        type();
-    }
-
-    // Initialize typing effect for hero title
+    // Typing effect
     const heroTitle = document.querySelector('.hero-title');
     if (heroTitle) {
         const originalText = heroTitle.textContent;
@@ -182,8 +155,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     }
 
-    // Add parallax effect to background
-    window.addEventListener('scroll', function() {
+    function typeWriter(element, text, speed = 100) {
+        let i = 0;
+        element.innerHTML = '';
+        function type() {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(type, speed);
+            }
+        }
+        type();
+    }
+
+    // Parallax effect
+    window.addEventListener('scroll', function () {
         const scrolled = window.pageYOffset;
         const parallax = document.querySelector('#home');
         if (parallax) {
@@ -192,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Mobile menu toggle (for future mobile implementation)
+    // Mobile menu toggle
     function createMobileMenuToggle() {
         const mobileToggle = document.createElement('button');
         mobileToggle.className = 'mobile-menu-toggle';
@@ -213,18 +199,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.body.appendChild(mobileToggle);
 
-        mobileToggle.addEventListener('click', function() {
+        mobileToggle.addEventListener('click', function () {
             const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('active');
+            if (sidebar) sidebar.classList.toggle('active');
         });
 
-        // Show mobile toggle on small screens
         function checkScreenSize() {
             if (window.innerWidth <= 768) {
                 mobileToggle.style.display = 'block';
             } else {
                 mobileToggle.style.display = 'none';
-                document.querySelector('.sidebar').classList.remove('active');
+                const sidebar = document.querySelector('.sidebar');
+                if (sidebar) sidebar.classList.remove('active');
             }
         }
 
@@ -234,13 +220,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     createMobileMenuToggle();
 
-    // Add intersection observer for animations
+    // Animate elements on scroll
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
     };
 
-    const observer = new IntersectionObserver(function(entries) {
+    const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.style.opacity = '1';
@@ -249,7 +235,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, observerOptions);
 
-    // Observe elements for animation
     document.querySelectorAll('.skill-category, .project-card, .timeline-item').forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(30px)';
@@ -258,13 +243,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Add custom cursor effect
-document.addEventListener('mousemove', function(e) {
-    const cursor = document.querySelector('.custom-cursor');
+// Custom cursor
+document.addEventListener('mousemove', function (e) {
+    let cursor = document.querySelector('.custom-cursor');
     if (!cursor) {
-        const newCursor = document.createElement('div');
-        newCursor.className = 'custom-cursor';
-        newCursor.style.cssText = `
+        cursor = document.createElement('div');
+        cursor.className = 'custom-cursor';
+        cursor.style.cssText = `
             position: fixed;
             width: 20px;
             height: 20px;
@@ -275,29 +260,23 @@ document.addEventListener('mousemove', function(e) {
             mix-blend-mode: difference;
             transition: transform 0.1s ease;
         `;
-        document.body.appendChild(newCursor);
+        document.body.appendChild(cursor);
     }
 
-    const actualCursor = document.querySelector('.custom-cursor');
-    actualCursor.style.left = e.clientX - 10 + 'px';
-    actualCursor.style.top = e.clientY - 10 + 'px';
+    cursor.style.left = e.clientX - 10 + 'px';
+    cursor.style.top = e.clientY - 10 + 'px';
 });
 
-// Add hover effects for interactive elements
-document.addEventListener('mouseenter', function(e) {
+document.addEventListener('mouseenter', function (e) {
     if (e.target.matches('button, a, .nav-link, .project-card')) {
         const cursor = document.querySelector('.custom-cursor');
-        if (cursor) {
-            cursor.style.transform = 'scale(1.5)';
-        }
+        if (cursor) cursor.style.transform = 'scale(1.5)';
     }
 }, true);
 
-document.addEventListener('mouseleave', function(e) {
+document.addEventListener('mouseleave', function (e) {
     if (e.target.matches('button, a, .nav-link, .project-card')) {
         const cursor = document.querySelector('.custom-cursor');
-        if (cursor) {
-            cursor.style.transform = 'scale(1)';
-        }
+        if (cursor) cursor.style.transform = 'scale(1)';
     }
 }, true);

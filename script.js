@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Show notification
     function showNotification(message, type) {
         const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
+        notification.className = notification ${type};
         notification.textContent = message;
 
         notification.style.cssText = `
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const parallax = document.querySelector('#home');
         if (parallax) {
             const speed = scrolled * 0.5;
-            parallax.style.transform = `translateY(${speed}px)`;
+            parallax.style.transform = translateY(${speed}px);
         }
     });
 

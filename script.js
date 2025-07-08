@@ -70,10 +70,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function animateSkillBars() {
         const skillBars = document.querySelectorAll('.skill-progress');
         skillBars.forEach(bar => {
-            const width = bar.style.width;
+            const finalWidth = bar.getAttribute('data-width') || bar.style.width;
             bar.style.width = '0%';
             setTimeout(() => {
-                bar.style.width = width;
+                bar.style.width = finalWidth;
             }, 300);
         });
     }
@@ -267,16 +267,13 @@ document.addEventListener('mousemove', function (e) {
     cursor.style.top = e.clientY - 10 + 'px';
 });
 
-document.addEventListener('mouseenter', function (e) {
-    if (e.target.matches('button, a, .nav-link, .project-card')) {
+['mouseover', 'mouseout'].forEach(evt => {
+    document.addEventListener(evt, function (e) {
         const cursor = document.querySelector('.custom-cursor');
-        if (cursor) cursor.style.transform = 'scale(1.5)';
-    }
-}, true);
+        if (!cursor) return;
 
-document.addEventListener('mouseleave', function (e) {
-    if (e.target.matches('button, a, .nav-link, .project-card')) {
-        const cursor = document.querySelector('.custom-cursor');
-        if (cursor) cursor.style.transform = 'scale(1)';
-    }
-}, true);
+        if (e.target.matches('button, a, .nav-link, .project-card')) {
+            cursor.style.transform = evt === 'mouseover' ? 'scale(1.5)' : 'scale(1)';
+        }
+    }, true);
+});

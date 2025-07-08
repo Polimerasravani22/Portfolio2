@@ -273,6 +273,7 @@ body {
   background: var(--accent-color);
   transition: left 0.3s ease;
   z-index: -1;
+   text-decoration: none;
 }
 .main-btn {
   background: var(--card-bg);
@@ -283,11 +284,13 @@ body {
   border-color: var(--primary-color);
   font-weight: 500;
   transition: all 0.3s ease;
+   text-decoration: none;
 }
 
 .main-btn h3 {
   color: var(--text-primary);
   font-size: 1.3rem;
+   text-decoration: none;
 }
 .main-btn:hover::before {
   left: 0;

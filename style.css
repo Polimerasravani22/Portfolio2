@@ -286,7 +286,7 @@ body {
 
 .main-btn h3 {
   color: var(--text-primary);
-  font-size: 1.3rem;
+  font-size: 1rem;
 }
 .main-btn:hover::before {
   left: 0;
